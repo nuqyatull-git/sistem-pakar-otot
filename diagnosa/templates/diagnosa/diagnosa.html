@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}Diagnosa{% endblock %}
+
+{% block content %}
+
+
+<div class="d-flex justify-content-end gap-2 mb-3 no-print">
+    <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-sm"> Beranda</a>
+    <a href="/admin/" class="btn btn-outline-dark btn-sm"> Login Admin</a>
+</div>
+
+<div class="text-center mb-4 no-print">
+    <h2 class="fw-bold"> Form Diagnosa Penyakit Otot</h2>
+    <p class="text-secondary">Jawab pertanyaan di bawah ini sesuai kondisi yang Anda alami saat ini.</p>
+</div>
+
+<div class="row">
+    <!-- Kolom kiri: Tabel gejala -->
+    <div class="col-lg-7 mb-4 no-print">
+        <div class="card p-4 h-100">
+            <h5 class="mb-3">📝 Daftar Gejala</h5>
+            <form method="post">
+                {% csrf_token %}
+                <div class="table-responsive">
+                    <table class="table table-bordered align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 50px;" class="text-center">No</th>
+                                <th>Pertanyaan</th>
+                                <th style="width: 70px;" class="text-center">Ya</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for checkbox in form.gejala %}
+                            <tr>
+                                <td class="text-center">{{ forloop.counter }}</td>
+                                <td>Apakah Anda mengalami <strong>{{ checkbox.choice_label|lower }}</strong>?</td>
+                                <td class="text-center">{{ checkbox.tag }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-primary btn-lg px-5">🔍 Diagnosa Sekarang</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Kolom kanan: Hasil diagnosa -->
+    <div class="col-lg-5 mb-4">
+        <div class="card p-4 h-100">
+            <h5 class="mb-3">📋 Hasil Diagnosa</h5>
+
+            {% if hasil %}
+                <table class="table table-borderless mb-3">
+                    <tr>
+                        <td class="text-secondary" style="width: 130px;">Nama</td>
+                        <td>: <strong>{{ pasien.nama }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="text-secondary">Umur</td>
+                        <td>: {% if umur %}{{ umur }} tahun{% else %}-{% endif %}</td>
+                    </tr>
+                    <tr>
+                        <td class="text-secondary">Tanggal Diagnosa</td>
+                        <td>: {{ riwayat.tanggal|date:"d F Y, H:i" }}</td>
+                    </tr>
+                </table>
+
+                {% for h in hasil %}
+                <div class="alert alert-info border-0 shadow-sm">
+                    <h6 class="alert-heading fw-bold">🩺 Hasil: {{ h.penyakit.nama }}</h6>
+                    <p class="mb-1 small"><strong>Jumlah gejala cocok:</strong> {{ h.jumlah_gejala_cocok }}</p>
+                    <hr>
+                    <p class="mb-1 small"><strong>Deskripsi:</strong> {{ h.penyakit.deskripsi|default:"-" }}</p>
+                    <hr>
+                    <p class="mb-0 small"><strong>Saran:</strong> {{ h.penyakit.solusi }}</p>
+                </div>
+                {% endfor %}
+
+                <div class="d-flex gap-2 mt-3 no-print">
+                    <button onclick="window.print()" class="btn btn-primary flex-fill">🖨️ Cetak</button>
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary flex-fill">🏠 Home</a>
+                </div>
+
+            {% elif request.method == 'POST' %}
+                <div class="alert alert-warning">Tidak ditemukan penyakit yang cocok dengan gejala yang dipilih.</div>
+                <div class="d-flex gap-2 mt-3 no-print">
+                    <a href="{% url 'home' %}" class="btn btn-outline-secondary flex-fill">Home</a>
+                </div>
+            {% else %}
+                <div class="text-center text-secondary py-5">
+                    <div class="fs-1 mb-2">🔍</div>
+                    <p class="mb-0">Hasil diagnosa akan muncul di sini setelah Anda mengisi form gejala.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

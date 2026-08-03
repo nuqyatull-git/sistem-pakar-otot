@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Beranda - Sistem Pakar Diagnosa Otot{% endblock %}
+
+{% block content %}
+<div class="row align-items-center g-5 py-4">
+    <div class="col-lg-6">
+        <span class="badge bg-primary-subtle text-primary fw-semibold mb-3 px-3 py-2"> Sistem Pakar Kesehatan</span>
+        <h1 class="display-5 fw-bold mb-3">Kenali Gejala, Jaga Kesehatan Otot Anda</h1>
+        <p class="lead text-secondary mb-4">
+            Otot yang sehat menopang setiap gerak tubuh kita. Jangan abaikan nyeri, kaku, atau kelemahan otot yang berulang —
+            kenali gejalanya sejak dini dan dapatkan gambaran diagnosa awal melalui sistem pakar kami.
+        </p>
+        <div class="d-flex gap-3 mb-4">
+            <a href="/admin/" class="btn btn-outline-primary btn-lg px-4"> Login Admin</a>
+            <a href="{% url 'login' %}" class="btn btn-primary btn-lg px-4">Login Pasien</a>
+            <!--<a href="{% url 'register' %}" class="btn btn-outline-primary btn-lg px-4">Daftar Akun</a>-->
+        </div>
+        <div class="alert alert-warning border-0 shadow-sm">
+            <strong>💡 Himbauan:</strong> Jaga pola aktivitas fisik, lakukan peregangan sebelum berolahraga, cukupi istirahat,
+            dan konsultasikan ke dokter apabila nyeri otot berlangsung lebih dari beberapa hari.
+        </div>
+    </div>
+    <div class="col-lg-6 text-center">
+        {% if gambar %}
+        <img src="{{ gambar.gambar.url }}" alt="Ilustrasi Dokter" class="img-fluid" style="max-height: 480px;">
+        {% else %}
+         <p class="text-muted">Belum ada gambar yang diunggah.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row mt-5 g-4">
+    <div class="col-md-4">
+        <div class="card h-100 p-4 text-center">
+            <div class="fs-1 mb-2">🔍</div>
+            <h5>Diagnosa Cepat</h5>
+            <p class="text-secondary mb-0">Pilih gejala yang Anda rasakan dan dapatkan hasil analisis penyakit otot secara instan.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-4 text-center">
+            <div class="fs-1 mb-2">📋</div>
+            <h5>Berbasis Pakar</h5>
+            <p class="text-secondary mb-0">Sistem menggunakan basis pengetahuan dan aturan yang disusun berdasarkan referensi medis.</p>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100 p-4 text-center">
+            <div class="fs-1 mb-2">📈</div>
+            <h5>Riwayat Tersimpan</h5>
+            <p class="text-secondary mb-0">Setiap hasil diagnosa Anda tercatat rapi untuk dipantau dan ditinjau kembali.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
