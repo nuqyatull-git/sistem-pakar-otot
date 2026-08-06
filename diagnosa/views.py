@@ -60,16 +60,18 @@ def register_pasien_view(request):
         form = RegisterPasienForm(request.POST)
         if form.is_valid():
             nama = form.cleaned_data['nama'].strip()
-            no_kartu = form.cleaned_data['no_kartu'].strip()
+            jenis_kelamin = form.cleaned_data['jenis_kelamin']
             tanggal_lahir = form.cleaned_data['tanggal_lahir']
             alamat = form.cleaned_data['alamat']
+            no_kartu = form.cleaned_data['no_kartu'].strip()
 
-            no_kartu_norm = no_kartu.upper()
+            """no_kartu_norm = no_kartu.upper()"""
 
             user = User.objects.create_user(username=no_kartu, password=no_kartu)
             Pasien.objects.create(
                 user=user, 
                 nama=nama, 
+                jenis_kelamin=jenis_kelamin,
                 no_kartu=no_kartu,
                 tanggal_lahir=tanggal_lahir,
                 alamat=alamat)

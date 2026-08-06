@@ -28,6 +28,11 @@
                     {{ form.tanggal_lahir }}
                 </div>
                 <div class="mb-3">
+                    <label class="form-label">Jenis Kelamin</label>
+                    {% for radio in form.jenis_kelamin %}
+                    {{ radio.tag }} {{ radio.choice_label }}
+                </div>
+                <div class="mb-3">
                     <label class="form-label">Alamat</label>
                     {{ form.alamat }}
                 </div>

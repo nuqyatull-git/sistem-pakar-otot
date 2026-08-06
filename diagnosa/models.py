@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+import random
 
 class Gejala(models.Model):
     kode = models.CharField(max_length=10, unique=True)  # G01, G02, dst
@@ -42,14 +42,29 @@ class Penyakit(models.Model):
         return f"{self.kode} - {self.nama}"
 
 class Pasien(models.Model):
+    JENIS_KELAMIN_CHOICES = [
+        ('L', 'Laki-laki'),
+        ('P', 'Perempuan'),
+    ]
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     nama = models.CharField(max_length=255)
+    jenis_kelamin = models.CharField(
+        max_length=1, choices=JENIS_KELAMIN_CHOICES, blank=True
+    )
     no_kartu = models.CharField(max_length=50, unique=True)
     tanggal_lahir = models.DateField(null=True, blank=True)
     alamat = models.TextField(blank=True)
+
     def __str__(self):
         return f"{self.nama} - {self.no_kartu}"
-    
+    @staticmethod
+    def generate_no_pendaftaran():
+        """Bikin nomor pendaftaran 6 digit acak yang belum dipakai."""
+        while True:
+            kode = str(random.randint(100000, 999999))
+            if not Pasien.objects.filter(no_kartu=kode).exists():
+                return kode
+            
 class Rule(models.Model):
     kode = models.CharField(max_length=10, unique=True, blank=True)
     penyakit = models.ForeignKey(Penyakit, on_delete=models.CASCADE, related_name='rules')
