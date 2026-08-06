@@ -5,7 +5,7 @@
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card p-4">
-            <h3 class="text-center mb-4">📝 Registrasi Pasien</h3>
+            <h3 class="text-center mb-4"> Registrasi Pasien</h3>
 
             {% if form.errors %}
                 <div class="alert alert-danger">
@@ -28,18 +28,24 @@
                     {{ form.tanggal_lahir }}
                 </div>
                 <div class="mb-3">
-                    <label class="form-label">Jenis Kelamin</label>
+                    <label class="form-label d-block">Jenis Kelamin</label>
                     {% for radio in form.jenis_kelamin %}
-                    {{ radio.tag }} {{ radio.choice_label }}
+                        <span class="me-3">
+                            {{ radio.tag }}
+                            <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                        </span>
+                    {% endfor %}
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Alamat</label>
                     {{ form.alamat }}
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">No Kartu Pasien</label>
-                    {{ form.no_kartu }}
-                </div>
+                <p class="text-muted small">No Pendaftaran akan dibuatkan otomatis, setelah Anda menekan tombol
+                    Lanjutkan di bawah.</p>
+ 
+                <button type="submit" class="btn btn-success w-100">Lanjutkan</button>
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary w-100 mt-2">Beranda</a>
+            </form>
                 <button type="submit" class="btn btn-success w-100">Daftar</button>
                 <a href="{% url 'home' %}" class="btn btn-outline-secondary w-100 mt-2">Beranda</a>
             </form>

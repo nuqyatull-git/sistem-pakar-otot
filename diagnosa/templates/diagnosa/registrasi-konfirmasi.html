@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Konfirmasi Registrasi{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card p-4">
+            <h3 class="text-center mb-4">✅ Konfirmasi Registrasi</h3>
+
+            <p>Berikut data pendaftaran Anda. No Pendaftaran dibuat otomatis oleh sistem.
+                Periksa kembali sebelum menekan tombol Daftar.</p>
+
+            <table class="table table-bordered">
+                <tr>
+                    <th style="width: 40%;">Nama</th>
+                    <td>{{ nama }}</td>
+                </tr>
+                <tr>
+                    <th>Tanggal Lahir</th>
+                    <td>{{ tanggal_lahir }}</td>
+                </tr>
+                <tr>
+                    <th>Jenis Kelamin</th>
+                    <td>{{ jenis_kelamin_label }}</td>
+                </tr>
+                <tr>
+                    <th>Alamat</th>
+                    <td>{{ alamat }}</td>
+                </tr>
+                <tr class="table-success">
+                    <th>No Pendaftaran</th>
+                    <td><strong style="font-size: 1.2em;">{{ no_kartu }}</strong></td>
+                </tr>
+            </table>
+
+            <p class="text-muted small">No Pendaftaran ini juga akan menjadi No Kartu
+                Pasien Anda untuk login. Simpan baik-baik.</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="step" value="2">
+                <button type="submit" class="btn btn-success w-100">Daftar</button>
+                <a href="{% url 'register' %}" class="btn btn-outline-secondary w-100 mt-2">Isi Ulang</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -56,33 +56,74 @@ def diagnosa_view(request):
         })
 
 def register_pasien_view(request):
+    step = request.POST.get('step')
+ 
+    # ----- STEP 2: konfirmasi & simpan ke database -----
+    if request.method == 'POST' and step == '2':
+        nama = request.session.get('reg_nama')
+        tanggal_lahir_str = request.session.get('reg_tanggal_lahir')
+        jenis_kelamin = request.session.get('reg_jenis_kelamin')
+        alamat = request.session.get('reg_alamat')
+        no_kartu = request.session.get('reg_no_kartu')
+ 
+        if not all([nama, tanggal_lahir_str, jenis_kelamin, no_kartu]):
+            messages.error(request, 'Sesi pendaftaran sudah habis, silakan isi ulang form.')
+            return redirect('register')
+ 
+        tanggal_lahir = date.fromisoformat(tanggal_lahir_str)
+ 
+        user = User.objects.create_user(username=no_kartu, password=no_kartu)
+        Pasien.objects.create(
+            user=user,
+            nama=nama,
+            jenis_kelamin=jenis_kelamin,
+            no_kartu=no_kartu,
+            tanggal_lahir=tanggal_lahir,
+            alamat=alamat,
+        )
+ 
+        # bersihkan session pendaftaran
+        for key in ['reg_nama', 'reg_tanggal_lahir', 'reg_jenis_kelamin', 'reg_alamat', 'reg_no_kartu']:
+            request.session.pop(key, None)
+ 
+        messages.success(
+            request,
+            f'Registrasi berhasil! No Pendaftaran Anda: {no_kartu}. '
+            'Gunakan nomor ini untuk login.'
+        )
+        return redirect('login')
+ 
+    # ----- STEP 1: validasi data awal, generate no pendaftaran -----
     if request.method == 'POST':
         form = RegisterPasienForm(request.POST)
         if form.is_valid():
             nama = form.cleaned_data['nama'].strip()
-            jenis_kelamin = form.cleaned_data['jenis_kelamin']
             tanggal_lahir = form.cleaned_data['tanggal_lahir']
+            jenis_kelamin = form.cleaned_data['jenis_kelamin']
             alamat = form.cleaned_data['alamat']
-            no_kartu = form.cleaned_data['no_kartu'].strip()
-
-            """no_kartu_norm = no_kartu.upper()"""
-
-            user = User.objects.create_user(username=no_kartu, password=no_kartu)
-            Pasien.objects.create(
-                user=user, 
-                nama=nama, 
-                jenis_kelamin=jenis_kelamin,
-                no_kartu=no_kartu,
-                tanggal_lahir=tanggal_lahir,
-                alamat=alamat)
-
-            messages.success(request, 'Registrasi berhasil, silakan login.')
-            return redirect('login')
+ 
+            no_kartu = Pasien.generate_no_pendaftaran()
+ 
+            request.session['reg_nama'] = nama
+            request.session['reg_tanggal_lahir'] = tanggal_lahir.isoformat()
+            request.session['reg_jenis_kelamin'] = jenis_kelamin
+            request.session['reg_alamat'] = alamat
+            request.session['reg_no_kartu'] = no_kartu
+ 
+            jenis_kelamin_label = dict(Pasien.JENIS_KELAMIN_CHOICES).get(jenis_kelamin, jenis_kelamin)
+ 
+            return render(request, 'diagnosa/register_konfirmasi.html', {
+                'nama': nama,
+                'tanggal_lahir': tanggal_lahir,
+                'jenis_kelamin_label': jenis_kelamin_label,
+                'alamat': alamat,
+                'no_kartu': no_kartu,
+            })
     else:
         form = RegisterPasienForm()
-
+ 
     return render(request, 'diagnosa/register.html', {'form': form})
-
+ 
 
 def login_pasien_view(request):
     if request.method == 'POST':
